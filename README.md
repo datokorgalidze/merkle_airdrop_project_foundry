@@ -1,66 +1,95 @@
-## Foundry
+# Merkle Airdrop Smart Contract
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+This project consists of two Solidity smart contracts:
 
-Foundry consists of:
+1.  MerkleAirdrop.sol – A contract that facilitates token airdrops using a Merkle tree for efficient verification of claim eligibility. It integrates EIP-712 signatures for additional security. Users can claim their allocated tokens by providing a valid Merkle proof and signature.
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+2.  BagelToken.sol – An ERC-20 token contract for "Bagel Token" (BT). It allows the contract owner to mint tokens, which can then be distributed via the Merkle Airdrop contract.
 
-## Documentation
+## Features:
 
-https://book.getfoundry.sh/
+- Merkle Proof Verification: Ensures only eligible users can claim tokens.
+- EIP-712 Signature Authentication: Prevents unauthorized claims.
+- Claim Tracking: Prevents duplicate claims.
+- Secure Token Transfers: Uses OpenZeppelin’s SafeERC20 for secure token distribution.
 
-## Usage
+# Getting Started
 
-### Build
+### Setup anvil and deploy contracts
 
-```shell
-$ forge build
+Swap back to vanilla foundry and run an anvil node:
+
+```bash
+foundryup
+make anvil
+make deploy
+# Copy the BagelToken address & Airdrop contract address
 ```
 
-### Test
+Copy the Bagel Token and Aidrop contract addresses and paste them into the `AIRDROP_ADDRESS` and `TOKEN_ADDRESS` variables in the `MakeFile`
 
-```shell
-$ forge test
+The following steps allow the second default anvil address (`0x70997970C51812dc3A010C7d01b50e0d17dc79C8`) to call claim and pay for the gas on behalf of the first default anvil address (`0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266`) which will recieve the airdrop.
+
+### Sign your airdrop claim
+
+```bash
+# in another terminal
+make sign
 ```
 
-### Format
+Retrieve the signature bytes outputted to the terminal and add them to `Interact.s.sol` _making sure to remove the `0x` prefix_.
 
-```shell
-$ forge fmt
+Additionally, if you have modified the claiming addresses in the merkle tree, you will need to update the proofs in this file too (which you can get from `output.json`)
+
+### Claim your airdrop
+
+Then run the following command:
+
+```bash
+make claim
 ```
 
-### Gas Snapshots
+### Check claim amount
 
-```shell
-$ forge snapshot
+Then, check the claiming address balance has increased by running
+
+```bash
+make balance
 ```
 
-### Anvil
+NOTE: `0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266` is the default anvil address which has recieved the airdropped tokens.
 
-```shell
-$ anvil
+## Testing
+
+```bash
+foundryup
+forge test
 ```
 
-### Deploy
+### Test Coverage
 
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
+```bash
+forge coverage
 ```
 
-### Cast
+## Estimate gas
 
-```shell
-$ cast <subcommand>
+You can estimate how much gas things cost by running:
+
+```
+forge snapshot
 ```
 
-### Help
+And you'll see an output file called `.gas-snapshot`
 
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
+# Formatting
+
+To run code formatting:
+
 ```
+forge fmt
+```
+
+[![David Korgalidze Linkedin](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/dato-korgalidze/)
+
+DAVID KORGALIDZE
